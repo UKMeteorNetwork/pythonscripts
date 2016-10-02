@@ -40,57 +40,23 @@ def el2polar(GM, a, e, M, max_error):
     r = a*(1 - e*np.cos(E))
     f = 2.0*np.arctan( np.sqrt((1 + e)/(1 - e))*np.tan(E/2) )
     n = np.sqrt(GM/a/a/a)
-    vr = e*a*n*np.sin(f)/np.sqrt(1 - e*e)
-    vt = a*n*(1 + e*np.cos(f))/np.sqrt(1 - e*e)
     z = vz = r*0.0
-    return r, f, z, vr, vt, vz
+    return r, f, z
 
-def polar2cartesian(r, theta, vr, vt):
+def polar2cartesian(r, theta):
     x = r*np.cos(theta)
     y = r*np.sin(theta)
-    vx = vr*np.cos(theta) - vt*np.sin(theta)
-    vy = vr*np.sin(theta) + vt*np.cos(theta)
-    return x, y, vx, vy
+    return x, y
 
 def el2xv(GM, a, e, I, O, w, M, max_error):
     #convert orbit elements to cartesian coordinates and velocities.
-    r, f, z, vr, vt, vz = el2polar(GM, a, e, M, max_error)
-    x, y, vx, vy = polar2cartesian(r, f, vr, vt)
+    r, f, z = el2polar(GM, a, e, M, max_error)
+    x, y    = polar2cartesian(r, f)
     x, y, z = Rz(x, y, z, -w)
-    vx, vy, vz = Rz(vx, vy, vz, -w)
     x, y, z = Rx(x, y, z, -I)
-    vx, vy, vz = Rx(vx, vy, vz, -I)
     x, y, z = Rz(x, y, z, -O)
-    vx, vy, vz = Rz(vx, vy, vz, -O)
-    return x, y, z, vx, vy, vz
+    return x, y, z
 
-def xv2el(GM, x, y, z, vx, vy, vz):
-    #convert cartesian coordinates and velocities to orbit elements.
-    hx = y*vz - z*vy
-    hy = z*vx - x*vz
-    hz = x*vy - y*vx
-    hxy2 = hx*hx + hy*hy
-    hxy = np.sqrt(hxy2)
-    h2 = hxy2 + hz*hz
-    h = np.sqrt(h2)
-    I = np.arccos(hz/h)
-    r = np.sqrt(x*x + y*y + z*z)
-    ex = (vy*hz - vz*hy)/GM - x/r
-    ey = (vz*hx - vx*hz)/GM - y/r
-    ez = (vx*hy - vy*hx)/GM - z/r
-    e = np.sqrt(ex*ex + ey*ey + ez*ez)
-    O = np.arctan2(hx, -hy)
-    ec = ex*np.cos(O) + ey*np.sin(O)
-    es = ez/np.sin(I)
-    v2 = vx*vx + vy*vy + vz*vz
-    a = 1.0/(2.0/r - v2/GM)
-    w = np.arctan2(es, ec)
-    rv = x*vx + y*vy + z*vz
-    ec = 1.0 - r/a
-    es = rv/np.sqrt(GM*a)
-    E = np.arctan2(es, ec)
-    M = E - es
-    return a, e, I, O, w, M
 
 def Rx(x, y, z, angle):
     #rotate coordinate system about the x axis by angle, in radians.
