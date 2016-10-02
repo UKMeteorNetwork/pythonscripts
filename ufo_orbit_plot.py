@@ -41,7 +41,7 @@ def orbit(a_element, e_element, i_element, o_element, w_element, Mp, col):
     Mplot = np.linspace(0, 2*math.pi, num=Npoints)
     zero = 0.0
     max_error = 1.0e-10
-    x_obj, y_obj, z_obj, vx_obj, vy_obj, vz_obj = el2xv(GM, a_element, e_element, zero, zero, zero, Mplot, max_error)
+    x_obj, y_obj, z_obj = el2xv(GM, a_element, e_element, zero, zero, zero, Mplot, max_error)
     axis.plot(x_obj, y_obj, z_obj, linestyle='-', color=col, linewidth=1)
 
 #-- Function to plot 3D orbit (angles in Radians)
@@ -52,7 +52,7 @@ def orbit_3d(a_element, e_element, i_element, o_element, w_element, Mp, col):
     zero = 0.0
     max_error = 1.0e-10
     Mplot = np.linspace(0, 2*math.pi, num=Npoints)
-    x_obj, y_obj, z_obj, vx_obj, vy_obj, vz_obj = el2xv(GM, a_element, e_element, zero, zero, zero, Mplot, max_error)
+    x_obj, y_obj, z_obj = el2xv(GM, a_element, e_element, zero, zero, zero, Mplot, max_error)
     x_obj, y_obj, z_obj = Rz(x_obj, y_obj, z_obj, o_element)
     x_obj, y_obj, z_obj = Rx(x_obj, y_obj, z_obj, i_element)
     x_obj, y_obj, z_obj = Rz(x_obj, y_obj, z_obj, w_element)
